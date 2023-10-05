@@ -20,6 +20,6 @@ def encode_cat(df_train, df_test):
 
     # One-hot encoding for categorical columns of train_values_df and test_values_df
     train_values_encoded_df = pd.get_dummies(df_train, columns=list(categorical_columns))
-    test_values_encoded_df = pd.get_dummies(test_values_df, columns=list(categorical_columns))
+    test_values_encoded_df = pd.get_dummies(df_test, columns=list(categorical_columns))
 
-    return train_values_encoded_df,test_values_encoded_df
+    return train_values_encoded_df, test_values_encoded_df
