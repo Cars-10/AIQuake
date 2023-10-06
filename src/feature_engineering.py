@@ -7,7 +7,6 @@ columns_to_drop = [
                     'position', 
                     'plan_configuration', 
                     'legal_ownership_status',
-                    'damage_grade'
                     ]# ['building_id']
 
 # This is a list of all categorical columns
