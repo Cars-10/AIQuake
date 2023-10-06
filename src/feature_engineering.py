@@ -3,7 +3,12 @@ import pandas as pd
 
 # Defining lists with columns to be dropped
 # First in the list is the building_id column, which is a unique identifier for each building. 
-columns_to_drop = ['position', 'plan_configuration', 'legal_ownership_status']# ['building_id']
+columns_to_drop = [
+                    'position', 
+                    'plan_configuration', 
+                    'legal_ownership_status',
+                    'damage_grade'
+                    ]# ['building_id']
 
 # This is a list of all categorical columns
 # Comment out the columns that you don't want to drop. DO NOT DELETE ITEMS FROM THIS LIST.
