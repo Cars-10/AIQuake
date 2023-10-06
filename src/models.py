@@ -6,11 +6,11 @@ from sklearn.metrics import mean_absolute_error
 # With out numerical data frame "df_numerical" we want to implement a random forest model
 def model01(X_train, y_train):
     """Makes and returns a model for a dataframe with feature data and a dataframe with label data.
-    
+
     Args:
         df_train_engineered (dataframe): The dataframe with feature data.
         df_label_balanced (dataframe): The dataframe with label data.
-    
+
     Returns:
         model: The model.
     """
@@ -23,11 +23,11 @@ def model01(X_train, y_train):
 
 def make_and_return_model(df_train_engineered, df_label_balanced):
     """Makes and returns a model for a dataframe with feature data and a dataframe with label data.
-    
+
     Args:
         df_train_engineered (dataframe): The dataframe with feature data.
         df_label_balanced (dataframe): The dataframe with label data.
-    
+
     Returns:
         model: The model.
     """
@@ -52,9 +52,9 @@ def model02(X_train, y_train, n_estimators=100, random_state=42):
     Returns:
         RandomForestClassifier: The trained Random Forest model.
     """
-    
+
     # Create and train the Random Forest model
     clf = RandomForestClassifier(n_estimators=n_estimators, random_state=random_state)
     clf.fit(X_train, y_train)
-    
+
     return clf
