@@ -1,6 +1,9 @@
+import category_encoders as ce
+import pandas as pd
+
 # Defining lists with columns to be dropped
 # First in the list is the building_id column, which is a unique identifier for each building. 
-columns_to_drop = ['building_id']
+columns_to_drop = ['position', 'plan_configuration', 'legal_ownership_status']# ['building_id']
 
 # This is a list of all categorical columns
 # Comment out the columns that you don't want to drop. DO NOT DELETE ITEMS FROM THIS LIST.
@@ -20,10 +23,10 @@ columns_with_numbers = [
                         'geo_level_1_id', 
                         'geo_level_2_id', 
                         'geo_level_3_id', 
-                        #'count_floors_pre_eq', 
-                        #'age', 
-                        #'area_percentage', 
-                        #'height_percentage', 
+                        'count_floors_pre_eq', 
+                        'age', 
+                        'area_percentage', 
+                        'height_percentage', 
                         'has_superstructure_adobe_mud', 
                         'has_superstructure_mud_mortar_stone', 
                         'has_superstructure_stone_flag', 
@@ -50,7 +53,21 @@ columns_with_numbers = [
                         ]
 
 # Combine the lists to drop columns
-columns_to_drop = columns_to_drop + categorical_columns + columns_with_numbers
+# columns_to_drop = columns_to_drop + categorical_columns #+ columns_with_numbers
+
+# Categorical columns for one-hot encoding
+columns_for_one_hot_encoding = [
+                                'land_surface_condition', 
+                                'foundation_type', 
+                                'roof_type', 
+                                'ground_floor_type', 
+                                'other_floor_type'
+                                ]
+# columns_for_one_hot_encoding = None
+
+# Categorical columns for base-n encoding
+columns_for_base_n_encoding = categorical_columns
+columns_for_base_n_encoding = None
 
 # Function to drop columns from a dataframe
 def drop_feature_columns(df, columns_to_drop=columns_to_drop):
@@ -68,15 +85,18 @@ def drop_feature_columns(df, columns_to_drop=columns_to_drop):
     print('List of columns to drop:')
     for idx, column in enumerate(columns_to_drop):
         print(f'{idx}:\t{column}')
+    print('')
     return df.drop(columns_to_drop, axis=1)
 
-# Function for categorical encoding using ???
+# Function for categorical encoding
+encoder_one_hot = ce.OneHotEncoder()
+encoder_base_n = ce.BaseNEncoder(base=3)
 def encode_categorical(df, 
-                       columns_for_one_hot_encoding=None, 
+                       columns_for_one_hot_encoding=columns_for_one_hot_encoding, 
                        columns_for_label_encoding=None,
-                       columns_for_base_n_encoding=None,
+                       columns_for_base_n_encoding=columns_for_base_n_encoding,
                        columns_for_binary_encoding=None,
-                       ):
+                       do_fit=True):
     """Encodes categorical columns for a dataframe with feature data.
     
     Args:
@@ -93,13 +113,43 @@ def encode_categorical(df,
     df_out = df.copy()
     # Identify categorical columns
     if columns_for_one_hot_encoding is not None:
-        pass
+        global encoder_one_hot
+        # One-hot encoding for categorical columns in columns_for_one_hot_encoding 
+        # using OneHotEncoder from category_encoders
+        print(f'One-hot encoding {len(columns_for_one_hot_encoding)} columns.')
+        print('List of columns to one-hot encode:')
+        for idx, column in enumerate(columns_for_one_hot_encoding):
+            print(f'{idx}:\t{column}')
+        print('')
+
+        if do_fit:
+            pass
+            # Fit the encoder_one_hot on the dataframe
+            # encoder_one_hot.fit(df_out, cols=columns_for_one_hot_encoding)
+
+        # Use the encoder_one_hot to transform the dataframe
+        # df_out = encoder_one_hot.transform(df_out)
+        df_out = pd.get_dummies(df_out, columns=columns_for_one_hot_encoding)
+        
 
     if columns_for_label_encoding is not None:
         pass
 
     if columns_for_base_n_encoding is not None:
-        pass
+        # Base N encoding with base 3
+        # using BaseNEncoder from category_encoders
+        print(f'Base N encoding {len(columns_for_base_n_encoding)} columns.')
+        print('List of columns to base N encode:')
+        for idx, column in enumerate(columns_for_base_n_encoding):
+            print(f'{idx}:\t{column}')
+        print('')
+
+        if do_fit:
+            # Fit the encoder_base_n on the dataframe
+            encoder_base_n.fit(df_out, cols=columns_for_base_n_encoding)
+
+        # Use the encoder_base_n to transform the dataframe
+        df_out = encoder_base_n.transform(df_out)
 
     if columns_for_binary_encoding is not None:
         pass
@@ -108,7 +158,7 @@ def encode_categorical(df,
     return df_out
 
 # Function for feature engineering
-def engineer_features(df):
+def engineer_features(df, do_fit=True):
     """Engineers features for a dataframe with feature data.
     
     Args:
@@ -121,7 +171,26 @@ def engineer_features(df):
     df = drop_feature_columns(df)
 
     # Encode categorical columns
-    df = encode_categorical(df)
+    df = encode_categorical(df, do_fit=do_fit)
+
+    if False:
+        # Print information about the dataframe
+        print('Dataframe info:')
+        print(df.info())
+        print('')
+        print('Dataframe head:')
+        print(df.head())
+        print('')
+        print('Dataframe desciption:')
+        print(df.describe())
+
+        global df_label
+        # Show the correlation of the features in df with the target in df_label
+        print('Correlation of features with target:')
+        print(df.corrwith(df_label["damage_grade"]))
+
+
+
 
     # Return the dataframe with engineered features
     return df
