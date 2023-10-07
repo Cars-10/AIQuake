@@ -23,7 +23,7 @@ def make_and_return_model(df_train_engineered, df_label_balanced):
     # Test-train split
     X_train, X_test, y_train, y_test = train_test_split(df_train_engineered, df_label_balanced["damage_grade"], test_size=0.2, random_state=42, stratify= df_label_balanced["damage_grade"])
 
-    return X_train, X_test, y_train, y_test, train_xgboost(X_train, y_train)
+    return X_train, X_test, y_train, y_test, train_random_forest(X_train, y_train)
 
 ####################################################################################################################
 
@@ -44,7 +44,7 @@ def train_random_forest(X_train, y_train, n_estimators=100, random_state=42):
 
     # Create and train the Random Forest model
     clf_rf = RandomForestClassifier(n_estimators=n_estimators, random_state=random_state)
-    clf_rf(X_train, y_train)
+    clf_rf.fit(X_train, y_train)
 
     return clf_rf
 
